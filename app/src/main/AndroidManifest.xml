@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.me.host">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name" android:name=".TestApplication"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ActivityS1"/>
+        <activity android:name=".ActivityS2"/>
+        <activity android:name=".ActivityS3"/>
+        <activity android:name=".ActivityS4"/>
+        <activity android:name=".ActivityS5"/>
+        <activity android:name=".ActivityS6"/>
+        <activity android:name=".ActivityS7"/>
+        <activity android:name=".ActivityS8"/>
+        <activity android:name=".ActivityS9"/>
+        <activity android:name=".ActivityS10"/>
+        
+        
+        <service android:name=".ServiceS1"/>
+        <service android:name=".ServiceS2"/>
+        <service android:name=".ServiceS3"/>
+        <service android:name=".ServiceS4"/>
+        <service android:name=".ServiceS5"/>
+        <service android:name=".ServiceS6"/>
+        <service android:name=".ServiceS7"/>
+        <service android:name=".ServiceS8"/>
+        <service android:name=".ServiceS9"/>
+        <service android:name=".ServiceS10"/>
+    </application>
+
+</manifest>

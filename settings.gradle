@@ -1,0 +1,2 @@
+include ':app', ':test', ':hostlib', ':pluginlib', ':test2', ':databinging'
+rootProject.name='PluginController'

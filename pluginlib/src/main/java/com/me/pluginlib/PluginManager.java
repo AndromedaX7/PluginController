@@ -29,7 +29,7 @@ public class PluginManager {
         return false;
     }
 
-    public static boolean prepareStartService(Intent intent) {
+    static boolean prepareStartService(Intent intent) {
         try {
             Method startActivityForResult = oHost.getClass().getDeclaredMethod("prepareStartService", Intent.class);
             startActivityForResult.invoke(oHost, intent);
@@ -39,7 +39,7 @@ public class PluginManager {
         return false;
     }
 
-    public static boolean prepareStopService(Intent intent) {
+    static boolean prepareStopService(Intent intent) {
         try {
             Method startActivityForResult = oHost.getClass().getDeclaredMethod("prepareStopService", Intent.class);
             startActivityForResult.invoke(oHost, intent);
@@ -48,6 +48,27 @@ public class PluginManager {
         }
         return false;
     }
+
+
+    public static boolean prepareBindService(Intent intent) {
+        try {
+            Method startActivityForResult = oHost.getClass().getDeclaredMethod("prepareBindService", Intent.class);
+            startActivityForResult.invoke(oHost, intent);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+//    public static boolean prepareUnbindService(Intent intent) {
+//        try {
+//            Method startActivityForResult = oHost.getClass().getDeclaredMethod("prepareUnbindService", Intent.class);
+//            startActivityForResult.invoke(oHost, intent);
+//        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
 
     public static void cleanServiceSlot(String name) {

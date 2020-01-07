@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
 import com.me.hostlib.plugin.ActivitySlotManager;
@@ -34,24 +34,22 @@ public class Host {
     private Host() {
     }
 
-    public boolean prepareStartService(Intent intent) {
+    private void prepareService(Intent intent) {
         ServiceInfo serviceInfo = getService(intent);
         if (serviceInfo != null) {
             String key = ServiceSlotManager.getInstance().dispatchSlot(serviceInfo);
             intent.setComponent(new ComponentName(intent.getComponent().getPackageName(), key));
             intent.putExtra("ServiceInfo", serviceInfo);
         }
+    }
+
+    public boolean prepareStartService(Intent intent) {
+        prepareService(intent);
         return true;
     }
 
     public boolean prepareStopService(Intent intent) {
-        ServiceInfo serviceInfo = getService(intent);
-        if (serviceInfo != null) {
-            String key = ServiceSlotManager.getInstance().dispatchSlot(serviceInfo);
-            intent.setComponent(new ComponentName(intent.getComponent().getPackageName(), key));
-            intent.putExtra("ServiceInfo", serviceInfo);
-
-        }
+        prepareService(intent);
         return true;
     }
 
@@ -122,9 +120,28 @@ public class Host {
         return false;
     }
 
+    public boolean bindService (Context c , Intent intent , ServiceConnection conn ,int flag){
+        prepareService(intent);
+        c.bindService(intent,conn,flag);
+        return true;
+    }
+
+    public boolean unbindService(Context c ,ServiceConnection conn){
+        c.unbindService(conn);
+        return true;
+    }
     public void cleanServiceSlot(String name) {
         ServiceSlotManager.getInstance().cleanServiceSlot(name);
     }
 
+    public boolean prepareBindService(Intent intent) {
+        prepareService(intent);
+        return true;
+    }
+
+    public boolean prepareUnbindService(Intent intent) {
+//        prepareService(intent);
+        return true;
+    }
 }
 

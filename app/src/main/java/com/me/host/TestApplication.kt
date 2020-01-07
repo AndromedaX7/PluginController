@@ -19,7 +19,7 @@ class TestApplication : Application() {
         val _getProcessName = _getProcessName()
         Log.e("process Name:","is :$_getProcessName")
 //        Plugins.getInstance().installOrLoad(this,"databinding.apk")
-        Plugins.getInstance().installOrLoad(this,"test2-start-final.apk")
+        Plugins.getInstance().installOrLoad(this,"test2-debug2.apk")
     }
 
     fun _getProcessName () :String {

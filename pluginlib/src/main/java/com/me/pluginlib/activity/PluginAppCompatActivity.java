@@ -64,5 +64,5 @@ public class PluginAppCompatActivity extends AppCompatActivity {
         } else
             super.startActivityForResult(intent, requestCode, options);
     }
-    
+
 }

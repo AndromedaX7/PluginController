@@ -11,7 +11,7 @@ class MyService2 : PluginService() {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        return null!!
+        return MyServiceBinder()
     }
 
     override fun onCreate() {
@@ -19,6 +19,10 @@ class MyService2 : PluginService() {
         Log.e(TAG, "onCreate")
     }
 
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.e(TAG, "onUnbind")
+        return super.onUnbind(intent)
+    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e(TAG, "onStartCommand")
 

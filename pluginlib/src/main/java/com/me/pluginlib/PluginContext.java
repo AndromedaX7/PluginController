@@ -9,7 +9,6 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
@@ -84,7 +83,7 @@ public class PluginContext extends ContextThemeWrapper {
 
     @Override
     public ClassLoader getClassLoader() {
-        if (mClassLoader!=null){
+        if (mClassLoader != null) {
             return mClassLoader;
         }
         return super.getClassLoader();
@@ -118,7 +117,6 @@ public class PluginContext extends ContextThemeWrapper {
     }
 
 
-
     @Override
     public void startActivity(Intent intent) {
         if (PluginManager.sClassLoader != null) {
@@ -140,17 +138,16 @@ public class PluginContext extends ContextThemeWrapper {
 
     @Override
     public boolean bindService(Intent service, ServiceConnection conn, int flags) {
+        if (mClassLoader != null) {
+            PluginManager.prepareBindService(service);
+            super.bindService(service, conn, flags);
+        }
         return super.bindService(service, conn, flags);
     }
 
     @Override
-    public void unbindService(ServiceConnection conn) {
-        super.unbindService(conn);
-    }
-
-    @Override
     public ComponentName startService(Intent service) {
-        if (mClassLoader!=null){
+        if (mClassLoader != null) {
             PluginManager.prepareStartService(service);
         }
         return super.startService(service);
@@ -158,7 +155,7 @@ public class PluginContext extends ContextThemeWrapper {
 
     @Override
     public boolean stopService(Intent name) {
-        if (mClassLoader!=null){
+        if (mClassLoader != null) {
             PluginManager.prepareStopService(name);
         }
         return super.stopService(name);

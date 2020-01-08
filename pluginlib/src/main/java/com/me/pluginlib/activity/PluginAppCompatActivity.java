@@ -1,6 +1,6 @@
 package com.me.pluginlib.activity;
 
-import android.content.ComponentName;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,12 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.me.pluginlib.PluginContext;
 import com.me.pluginlib.PluginManager;
+import com.me.pluginlib.ReflectUtils;
+
+import java.lang.reflect.Field;
 
 public class PluginAppCompatActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(new PluginContext(newBase));
+        PluginContext pluginContext = new PluginContext(newBase);
+        super.attachBaseContext(pluginContext);
+
     }
 
     @Override
@@ -25,6 +30,20 @@ public class PluginAppCompatActivity extends AppCompatActivity {
             Intent intent = getIntent();
             ActivityInfo activityInfo = intent.getParcelableExtra("ActivityInfo");
             setTheme(activityInfo != null && activityInfo.theme != 0 ? activityInfo.theme : getApplicationInfo().theme);
+
+
+        }
+
+        if (PluginManager.sApplicationContext != null) {
+            try {
+                Field mApplication = Activity.class.getDeclaredField("mApplication");
+                mApplication.setAccessible(true);
+                ReflectUtils.removeFieldFinalModifier(mApplication);
+                ReflectUtils.writeField(mApplication, this, PluginManager.sApplicationContext);
+                mApplication.setAccessible(false);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
         super.onCreate(savedInstanceState);
     }

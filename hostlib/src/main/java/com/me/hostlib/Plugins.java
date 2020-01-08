@@ -1,7 +1,10 @@
 package com.me.hostlib;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -15,6 +18,7 @@ import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
 import com.me.hostlib.plugin.ActivitySlotManager;
+import com.me.hostlib.plugin.ReceiverParser;
 import com.me.hostlib.plugin.ServiceCache;
 import com.me.hostlib.plugin.ServiceSlotManager;
 import com.me.hostlib.plugin.SlotManager;
@@ -28,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import dalvik.system.DexClassLoader;
 
@@ -102,7 +107,7 @@ public class Plugins {
 
     }
 
-    private static void handlePackages(Context context, Message msg) {
+    private static void handlePackages(Application context, Message msg) {
         try {
             PackageArchiveData p = (PackageArchiveData) msg.obj;
             DexClassLoader classLoader = new DexClassLoader(p.getDexPath(), p.getOpt(), p.getLibs(), context.getClassLoader().getParent());
@@ -116,43 +121,61 @@ public class Plugins {
             Resources resources = context.getPackageManager().getResourcesForApplication(appInfo);
 
             ActivityInfo[] activities = packageInfo.activities;
-            ArrayList<ActivityCache> activityCaches = new ArrayList<>();
-            for (ActivityInfo activity : activities) {
-                Log.e("activity className", activity.name);
-                activityCaches.add(new ActivityCache(p.getPluginName(), activity));
-            }
-            SlotManager.getInstance().setActivityInfo(activityCaches);
 
+            if (activities != null) {
+                ArrayList<ActivityCache> activityCaches = new ArrayList<>();
+                for (ActivityInfo activity : activities) {
+                    Log.e("activity className", activity.name);
+                    activityCaches.add(new ActivityCache(p.getPluginName(), activity));
+                }
+                SlotManager.getInstance().setActivityInfo(activityCaches);
+            }
             ServiceInfo[] services = packageInfo.services;
-            ArrayList<ServiceCache> serviceCaches = new ArrayList<>();
-            for (ServiceInfo service : services) {
-                Log.e("service className", service.name);
-                serviceCaches.add(new ServiceCache(p.getPluginName(), service));
+            if (services != null) {
+                ArrayList<ServiceCache> serviceCaches = new ArrayList<>();
+                for (ServiceInfo service : services) {
+                    Log.e("service className", service.name);
+                    serviceCaches.add(new ServiceCache(p.getPluginName(), service));
+                }
+                SlotManager.getInstance().setServiceInfo(serviceCaches);
             }
-            SlotManager.getInstance().setServiceInfo(serviceCaches);
-
 
             Class<?> pluginManagerClass = classLoader.loadClass("com.me.pluginlib.PluginManager");
             if (pluginManagerClass != null) {
                 ReflectUtils.writeField(pluginManagerClass, null, "sClassLoader", classLoader);
                 ReflectUtils.writeField(pluginManagerClass, null, "sResources", resources);
                 ReflectUtils.writeField(pluginManagerClass, null, "sApplicationInfo", appInfo);
+
+
                 Method setHost = pluginManagerClass.getDeclaredMethod("setHost", Object.class);
                 setHost.invoke(null, Host.getInstance());
             }
 
 
+            Class<?> baseContext = classLoader.loadClass("com.me.pluginlib.PluginContext");
+            Context pluginBaseContext;
+            if (baseContext != null) {
+                pluginBaseContext = (Context) baseContext.getConstructor(Context.class).newInstance(context.getBaseContext());
+            } else {
+                pluginBaseContext = context.getBaseContext();
+            }
+
             Class<?> aClass = null;
 
-            Log.e("appName", ";;" + appInfo.name);
+            Log.e("appName", "::" + appInfo.name);
             if (!TextUtils.isEmpty(appInfo.name)) {
                 aClass = getInstance().mClassLoader.get(p.getPluginName()).loadClass(appInfo.name);
                 if (aClass != null) {
-                    Application oApp = (Application) aClass.newInstance();
 
+                    Method attachBaseContext = ContextWrapper.class.getDeclaredMethod("attachBaseContext", Context.class);
+                    attachBaseContext.setAccessible(true);
+                    Application oApp = (Application) aClass.newInstance();
+                    attachBaseContext.invoke(oApp, pluginBaseContext);
+                    ReflectUtils.writeField(pluginManagerClass, null, "sApplicationContext", oApp);
                     oApp.onCreate();
                 }
             }
+            ReceiverParser.installPluginReceiver(context,p.getPluginName(),packageInfo,resources);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | PackageManager.NameNotFoundException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -169,13 +192,17 @@ public class Plugins {
         return clazz;
     }
 
+    public  ClassLoader getClassLoader(String pluginName) {
+        ClassLoader classLoader = mClassLoader.get(pluginName);
+        return classLoader==null?Plugins.class.getClassLoader():classLoader;
+    }
 
     public void installOrLoad(Context c, String pluginName) {
         try {
             if (new File(Files.pluginDir(c, pluginName), pluginName).exists()) {
-                new ParseThread(c, pluginName, ParseThread.OP_PARSE_APK).start();
+                new ParseThread(c, pluginName, ParseThread.OP_MOUNT_PLUGIN).start();
             } else {
-                new ParseThread(c, pluginName, ParseThread.OP_PARSE_APK | ParseThread.OP_ASSETS).start();
+                new ParseThread(c, pluginName, ParseThread.OP_PARSE_APK | ParseThread.OP_ASSETS | ParseThread.OP_MOUNT_PLUGIN).start();
             }
 
 

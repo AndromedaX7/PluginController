@@ -24,13 +24,14 @@ public class PluginContext extends ContextThemeWrapper {
     private ApplicationInfo mApplicationInfo;
     private ClassLoader mClassLoader;
     private LayoutInflater mInflater;
+    private Context mApplicationContext;
 
     public PluginContext(Context context) {
         super(context, android.R.style.Theme);
-        this.mResources = PluginManager.sResources;
-        this.mApplicationInfo = PluginManager.sApplicationInfo;
-        this.mClassLoader = PluginManager.sClassLoader;
-
+        mResources = PluginManager.sResources;
+        mApplicationInfo = PluginManager.sApplicationInfo;
+        mClassLoader = PluginManager.sClassLoader;
+        mApplicationContext = PluginManager.sApplicationContext;
     }
 
     @Override
@@ -79,6 +80,14 @@ public class PluginContext extends ContextThemeWrapper {
             return mApplicationInfo;
         }
         return super.getApplicationInfo();
+    }
+
+    @Override
+    public Context getApplicationContext() {
+        if (mApplicationContext != null) {
+            return mApplicationContext;
+        }
+        return super.getApplicationContext();
     }
 
     @Override

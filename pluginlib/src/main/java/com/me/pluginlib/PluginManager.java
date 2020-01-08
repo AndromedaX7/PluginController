@@ -1,5 +1,6 @@
 package com.me.pluginlib;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
@@ -13,6 +14,7 @@ public class PluginManager {
     public static ApplicationInfo sApplicationInfo;
     public static ClassLoader sClassLoader;
     public static Object oHost;
+    public static Context sApplicationContext;
 
 
     public static void setHost(Object host) {

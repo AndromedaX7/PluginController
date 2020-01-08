@@ -22,5 +22,8 @@
     <Button
         android:layout_width="match_parent" android:text="unbindService" android:id="@+id/e"
         android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="match_parent" android:text="sendReceiver" android:id="@+id/f"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

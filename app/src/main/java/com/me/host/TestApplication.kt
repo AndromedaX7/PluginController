@@ -18,8 +18,8 @@ class TestApplication : Application() {
         super.onCreate()
         val _getProcessName = _getProcessName()
         Log.e("process Name:","is :$_getProcessName")
-//        Plugins.getInstance().installOrLoad(this,"databinding.apk")
-        Plugins.getInstance().installOrLoad(this,"test2-debug2.apk")
+        Plugins.getInstance().installOrLoad(this,"nativelib-debug.apk")
+        Plugins.getInstance().installOrLoad(this,"test2-receiver-2.apk")
     }
 
     fun _getProcessName () :String {

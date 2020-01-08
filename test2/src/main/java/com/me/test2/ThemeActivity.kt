@@ -31,6 +31,9 @@ class ThemeActivity : PluginAppCompatActivity(),ServiceConnection {
         e.setOnClickListener {
             unbindService(this)
         }
+        f.setOnClickListener {
+            sendBroadcast(Intent("com.receiver"))
+        }
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {

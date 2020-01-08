@@ -16,8 +16,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         testProvider.setOnClickListener {
-            Host.getInstance().startService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
-//            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.databinging.MainActivity")))
+//            Host.getInstance().startService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
+            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.nativelib.MainActivity")))
         }
         test2.setOnClickListener {
             Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.test2.ThemeActivity")))
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-//        super.onBackPressed()
-        Host.getInstance().stopService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
+        super.onBackPressed()
+//        Host.getInstance().stopService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
     }
 }

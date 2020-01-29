@@ -1,14 +1,13 @@
 package com.me.hostlib;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -18,6 +17,8 @@ import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
 import com.me.hostlib.plugin.ActivitySlotManager;
+import com.me.hostlib.plugin.ManifestParser;
+import com.me.hostlib.plugin.ProviderService;
 import com.me.hostlib.plugin.ReceiverParser;
 import com.me.hostlib.plugin.ServiceCache;
 import com.me.hostlib.plugin.ServiceSlotManager;
@@ -32,39 +33,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import dalvik.system.DexClassLoader;
 
 public class Plugins {
-    private static Handler handler;
+    public static final int PLUGIN_INSTALL = 65534;
     private static final String TAG = "Plugins";
+    private static Handler handler;
     private static volatile Plugins sPlugins;
     private HashMap<String, ClassLoader> mClassLoader = new HashMap<>();
-
-    public void installClassLoader(String pluginName, ClassLoader classLoader) {
-        mClassLoader.put(pluginName, classLoader);
-    }
-
     private boolean mPatchClassLoader = false;
     private boolean mLoadPlugin = false;
-
-    public void setPatchClassLoader(boolean patchClassLoader) {
-        this.mPatchClassLoader = patchClassLoader;
-    }
-
-    public void setLoadPlugin(boolean mLoadPlugin) {
-        this.mLoadPlugin = mLoadPlugin;
-    }
-
-    public boolean isLoadPlugin() {
-        return mLoadPlugin;
-    }
-
-    public boolean isPatchClassLoader() {
-        return mPatchClassLoader;
-    }
-
     private Plugins() {
     }
 
@@ -152,14 +131,6 @@ public class Plugins {
             }
 
 
-            Class<?> baseContext = classLoader.loadClass("com.me.pluginlib.PluginContext");
-            Context pluginBaseContext;
-            if (baseContext != null) {
-                pluginBaseContext = (Context) baseContext.getConstructor(Context.class).newInstance(context.getBaseContext());
-            } else {
-                pluginBaseContext = context.getBaseContext();
-            }
-
             Class<?> aClass = null;
 
             Log.e("appName", "::" + appInfo.name);
@@ -170,15 +141,67 @@ public class Plugins {
                     Method attachBaseContext = ContextWrapper.class.getDeclaredMethod("attachBaseContext", Context.class);
                     attachBaseContext.setAccessible(true);
                     Application oApp = (Application) aClass.newInstance();
-                    attachBaseContext.invoke(oApp, pluginBaseContext);
                     ReflectUtils.writeField(pluginManagerClass, null, "sApplicationContext", oApp);
+
+
+                    Class<?> baseContext = classLoader.loadClass("com.me.pluginlib.PluginContext");
+                    Context pluginBaseContext;
+                    if (baseContext != null) {
+                        pluginBaseContext = (Context) baseContext.getConstructor(Context.class).newInstance(context.getBaseContext());
+                    } else {
+                        pluginBaseContext = context.getBaseContext();
+                    }
+                    attachBaseContext.invoke(oApp, pluginBaseContext);
+
                     oApp.onCreate();
                 }
             }
-            ReceiverParser.installPluginReceiver(context,p.getPluginName(),packageInfo,resources);
+            ReceiverParser.installPluginReceiver(context, p.getPluginName(), packageInfo, resources);
+            ManifestParser.installPluginReceiver(context, p.getPluginName(), packageInfo, resources);
+
+            HashMap<String, ProviderInfo> pInfo = new HashMap<>();
+            ProviderInfo[] providers = packageInfo.providers;
+            if (providers != null) {
+                for (int i = 0; i < providers.length; i++) {
+                    ProviderInfo provider = providers[i];
+                    pInfo.put(provider.authority, provider);
+                }
+                ProviderService.updateInfo(pInfo);
+            }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | PackageManager.NameNotFoundException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void sendAppInfo(String pluginName, String dexPath, String opt, String libs) {
+        Message msg = new Message();
+        msg.what = PLUGIN_INSTALL;
+        msg.obj = new PackageArchiveData(pluginName, dexPath, opt, libs);
+        handler.sendMessage(msg);
+    }
+
+    public HashMap<String, ClassLoader> allClassLoader() {
+        return mClassLoader;
+    }
+
+    public void installClassLoader(String pluginName, ClassLoader classLoader) {
+        mClassLoader.put(pluginName, classLoader);
+    }
+
+    public boolean isLoadPlugin() {
+        return mLoadPlugin;
+    }
+
+    public void setLoadPlugin(boolean mLoadPlugin) {
+        this.mLoadPlugin = mLoadPlugin;
+    }
+
+    public boolean isPatchClassLoader() {
+        return mPatchClassLoader;
+    }
+
+    public void setPatchClassLoader(boolean patchClassLoader) {
+        this.mPatchClassLoader = patchClassLoader;
     }
 
     Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -192,9 +215,9 @@ public class Plugins {
         return clazz;
     }
 
-    public  ClassLoader getClassLoader(String pluginName) {
+    public ClassLoader getClassLoader(String pluginName) {
         ClassLoader classLoader = mClassLoader.get(pluginName);
-        return classLoader==null?Plugins.class.getClassLoader():classLoader;
+        return classLoader == null ? Plugins.class.getClassLoader() : classLoader;
     }
 
     public void installOrLoad(Context c, String pluginName) {
@@ -210,14 +233,4 @@ public class Plugins {
             e.printStackTrace();
         }
     }
-
-
-    public static void sendAppInfo(String pluginName, String dexPath, String opt, String libs) {
-        Message msg = new Message();
-        msg.what = PLUGIN_INSTALL;
-        msg.obj = new PackageArchiveData(pluginName, dexPath, opt, libs);
-        handler.sendMessage(msg);
-    }
-
-    public static final int PLUGIN_INSTALL = 65534;
 }

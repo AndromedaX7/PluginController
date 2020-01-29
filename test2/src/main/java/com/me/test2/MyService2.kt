@@ -1,11 +1,12 @@
 package com.me.test2
 
+import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.me.pluginlib.service.PluginService
 
-class MyService2 : PluginService() {
+class MyService2 : Service() {
     private companion object {
         val TAG = MyService2::class.java.name
     }

@@ -1,4 +1,4 @@
 package com.me.hostlib.plugin;
 
-public class ProviderCache {
+public class ReceiverParser2 {
 }

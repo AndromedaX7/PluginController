@@ -133,7 +133,7 @@ public class ReceiverParser {
     private static void addSubBroadcastReceiver(SubReceiver subReceiver) {
         sBroadcastReceiverList.add(subReceiver);
     }
-    
+
     private static XmlBean getXmlBeanByName(String name, XmlBean xmlBean) {
         if (name.equals(xmlBean.getName())) {
             return xmlBean;

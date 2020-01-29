@@ -1,5 +1,6 @@
 package com.me.databinging
 
+import android.content.Intent
 import android.view.View
 import android.widget.Button
 import androidx.databinding.BaseObservable
@@ -14,7 +15,6 @@ class Model : BaseObservable() {
     }
 
     fun setTextShow(v:View){
-        v as Button
-        v.text = text
+       v.context.sendBroadcast(Intent("test.receiver").setPackage(v.context.packageName))
     }
 }

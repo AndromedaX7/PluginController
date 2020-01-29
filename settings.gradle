@@ -1,2 +1,2 @@
-include ':app', ':test', ':hostlib', ':pluginlib', ':test2', ':databinging', ':nativelib'
+include ':app',/* ':test',*/ ':hostlib', ':pluginlib', ':test2'/*, ':databinging', ':nativelib'*/, ':plugin'
 rootProject.name='PluginController'

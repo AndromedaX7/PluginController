@@ -16,10 +16,8 @@ class TestApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val _getProcessName = _getProcessName()
-        Log.e("process Name:","is :$_getProcessName")
         Plugins.getInstance().installOrLoad(this,"nativelib-debug.apk")
-        Plugins.getInstance().installOrLoad(this,"test2-receiver-2.apk")
+        Plugins.getInstance().installOrLoad(this,"cp-2.apk")
     }
 
     fun _getProcessName () :String {
@@ -35,4 +33,5 @@ class TestApplication : Application() {
 
         return  ""
     }
+
 }

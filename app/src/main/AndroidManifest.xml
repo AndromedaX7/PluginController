@@ -39,6 +39,14 @@
         <service android:name=".ServiceS8"/>
         <service android:name=".ServiceS9"/>
         <service android:name=".ServiceS10"/>
+        <receiver android:name=".Receiver">
+
+        </receiver>
+        <provider
+            android:name="com.me.host.MyContentProvider"
+            android:authorities="i.app.o2.provider"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

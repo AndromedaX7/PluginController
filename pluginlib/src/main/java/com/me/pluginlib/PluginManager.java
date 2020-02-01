@@ -15,7 +15,11 @@ public class PluginManager {
     public static ClassLoader sClassLoader;
     public static Object oHost;
     public static Context sApplicationContext;
+    public static Object oProviderService;
 
+    public static void setProviderService(Object providerService) {
+        PluginManager.oProviderService = providerService;
+    }
 
     public static void setHost(Object host) {
         oHost = host;

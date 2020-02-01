@@ -205,13 +205,18 @@ public final class ReflectUtils {
     }
 
 
+    public static Object ccInvokeMethod(final Object object, final String methodName, Class<?>[] methodParamTypes, Object... args)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Class clz = object.getClass();
+        Method m = getMethod(clz, methodName, methodParamTypes);
+        return m.invoke(object,args);
+    }
     public static Object invokeMethod(final Object object, final String methodName, Class<?>[] methodParamTypes, Object... args)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Class clz = object.getClass();
         Method m = getMethod(clz, methodName, methodParamTypes);
         return m.invoke(args);
     }
-
     public static Object invokeMethod(ClassLoader loader, String clzName,
                                       String methodName, Object methodReceiver,
                                       Class<?>[] methodParamTypes, Object... methodParamValues) throws

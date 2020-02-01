@@ -7,7 +7,7 @@ import android.os.IBinder
 import android.util.Log
 import com.me.pluginlib.service.PluginService
 
-class MyService : Service() {
+class MyService : PluginService() {
     private companion object {
         val TAG = MyService::class.java.name
     }

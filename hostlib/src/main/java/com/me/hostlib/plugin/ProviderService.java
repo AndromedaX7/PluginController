@@ -8,6 +8,7 @@ import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -16,6 +17,9 @@ import androidx.annotation.Nullable;
 
 import com.me.hostlib.Plugins;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 public class ProviderService {
@@ -77,7 +81,10 @@ public class ProviderService {
                 ClassLoader classLoader = allClassLoader.get(k);
                 try {
                     provider = classLoader.loadClass(name);
-                    if (provider != null) break;
+                    if (provider != null) {
+                        pk = k;
+                        break;
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -89,7 +96,7 @@ public class ProviderService {
                 Object o = provider.newInstance();
                 if (!(o instanceof ContentProvider)) return null;
                 contentProvider = (ContentProvider) o;
-                contentProvider.attachInfo(context, providerInfo);
+                contentProvider.attachInfo(Plugins.getInstance().getContext(pk), providerInfo);
                 contentProvider.onCreate();
                 cache.put(authority, contentProvider);
             } catch (IllegalAccessException | InstantiationException e) {
@@ -198,5 +205,43 @@ public class ProviderService {
 
     private ContentProviderClient queryProvider(Uri uri) {
         return context.getContentResolver().acquireContentProviderClient(uri);
+    }
+
+    public OutputStream openOutputStream(Uri uri) throws FileNotFoundException {
+        ContentProviderClient client = queryProvider(uri);
+        if (client == null) {
+            ContentProvider provider = findProvider(uri);
+            if (provider == null) {
+                Log.e("get client error", uri.getAuthority());
+                return null;
+            } else {
+                return new ParcelFileDescriptor.AutoCloseOutputStream(provider.openFile(uri, "w"));
+            }
+        }
+        try {
+            return new ParcelFileDescriptor.AutoCloseOutputStream(client.openFile(uri, "w"));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public InputStream openInputStream(Uri uri) throws FileNotFoundException {
+        ContentProviderClient client = queryProvider(uri);
+        if (client == null) {
+            ContentProvider provider = findProvider(uri);
+            if (provider == null) {
+                Log.e("get client error", uri.getAuthority());
+                return null;
+            } else {
+                return new ParcelFileDescriptor.AutoCloseInputStream(provider.openFile(uri, "r"));
+            }
+        }
+        try {
+            return new ParcelFileDescriptor.AutoCloseInputStream(client.openFile(uri, "r"));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

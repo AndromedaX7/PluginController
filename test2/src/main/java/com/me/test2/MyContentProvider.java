@@ -2,13 +2,17 @@ package com.me.test2;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.FileNotFoundException;
 
 public class MyContentProvider extends ContentProvider {
     public MyContentProvider() {
@@ -16,7 +20,6 @@ public class MyContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
         return 0;
     }
 
@@ -27,9 +30,8 @@ public class MyContentProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Uri insert(Uri uri, ContentValues values) {return  uri;
+
     }
 
     @Override
@@ -40,22 +42,21 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return 0;
     }
 
     @Nullable
     @Override
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
-
         Log.e( "call: ", "i.test.o2.provider: success");
+
+        Log.e("context :",getContext().getClass().getName());
         return super.call(method, arg, extras);
     }
 }

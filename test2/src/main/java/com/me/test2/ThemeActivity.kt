@@ -4,19 +4,21 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.me.pluginlib.PMClient
 import com.me.pluginlib.activity.PluginAppCompatActivity
 import kotlinx.android.synthetic.main.activity_theme.*
 
-class ThemeActivity :  AppCompatActivity(),ServiceConnection {
+class ThemeActivity : PluginAppCompatActivity(), ServiceConnection {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_theme)
-        Log.e("super class",this.javaClass.superclass.name)
+        Log.e("super class", this.javaClass.superclass.name)
         c.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
@@ -34,6 +36,9 @@ class ThemeActivity :  AppCompatActivity(),ServiceConnection {
         }
         f.setOnClickListener {
             sendBroadcast(Intent("com.receiver2").setPackage(packageName))
+        }
+        g.setOnClickListener {
+            PMClient.call(this, Uri.parse("content://i.test.o2.provider"),"test",null,null)
         }
     }
 

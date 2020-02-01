@@ -41,9 +41,12 @@ public class Plugins {
     private static final String TAG = "Plugins";
     private static Handler handler;
     private static volatile Plugins sPlugins;
+    private static HashMap<String, Context> allContext = new HashMap<>();
     private HashMap<String, ClassLoader> mClassLoader = new HashMap<>();
     private boolean mPatchClassLoader = false;
     private boolean mLoadPlugin = false;
+    private Context initContext;
+
     private Plugins() {
     }
 
@@ -59,6 +62,7 @@ public class Plugins {
     }
 
     public static void init(final Application application) {
+        Plugins.getInstance().initContext = application;
         ActivitySlotManager.setPackageName(application.getPackageName());
         ServiceSlotManager.setPackageName(application.getPackageName());
         handler = new Handler(new Handler.Callback() {
@@ -124,25 +128,23 @@ public class Plugins {
                 ReflectUtils.writeField(pluginManagerClass, null, "sClassLoader", classLoader);
                 ReflectUtils.writeField(pluginManagerClass, null, "sResources", resources);
                 ReflectUtils.writeField(pluginManagerClass, null, "sApplicationInfo", appInfo);
-
-
                 Method setHost = pluginManagerClass.getDeclaredMethod("setHost", Object.class);
                 setHost.invoke(null, Host.getInstance());
             }
 
-
-            Class<?> aClass = null;
+            Class<?> appClass = null;
 
             Log.e("appName", "::" + appInfo.name);
             if (!TextUtils.isEmpty(appInfo.name)) {
-                aClass = getInstance().mClassLoader.get(p.getPluginName()).loadClass(appInfo.name);
-                if (aClass != null) {
 
+                appClass = getInstance().mClassLoader.get(p.getPluginName()).loadClass(appInfo.name);
+                if (appClass != null) {
                     Method attachBaseContext = ContextWrapper.class.getDeclaredMethod("attachBaseContext", Context.class);
                     attachBaseContext.setAccessible(true);
-                    Application oApp = (Application) aClass.newInstance();
+                    Application oApp = (Application) appClass.newInstance();
+                    allContext.put(p.getPluginName(), oApp);
                     ReflectUtils.writeField(pluginManagerClass, null, "sApplicationContext", oApp);
-
+                    ReflectUtils.writeField(pluginManagerClass, null, "oProviderService", ProviderService.getInstance(context));
 
                     Class<?> baseContext = classLoader.loadClass("com.me.pluginlib.PluginContext");
                     Context pluginBaseContext;
@@ -178,6 +180,11 @@ public class Plugins {
         msg.what = PLUGIN_INSTALL;
         msg.obj = new PackageArchiveData(pluginName, dexPath, opt, libs);
         handler.sendMessage(msg);
+    }
+
+    public Context getContext(String pluginName) {
+        Context context = allContext.get(pluginName);
+        return context == null ? sPlugins.initContext : context;
     }
 
     public HashMap<String, ClassLoader> allClassLoader() {

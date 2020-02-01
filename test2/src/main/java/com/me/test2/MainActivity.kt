@@ -14,8 +14,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.me.pluginlib.activity.PluginAppCompatActivity
+import com.me.pluginlib.service.PluginService
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : PluginAppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 

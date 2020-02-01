@@ -17,7 +17,7 @@ class TestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Plugins.getInstance().installOrLoad(this,"nativelib-debug.apk")
-        Plugins.getInstance().installOrLoad(this,"cp-2.apk")
+        Plugins.getInstance().installOrLoad(this,"cp-2.8.7.apk")
     }
 
     fun _getProcessName () :String {

@@ -18,8 +18,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         testProvider.setOnClickListener {
 //            Host.getInstance().startService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
-//            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.nativelib.MainActivity")))
-            ProviderService.getInstance(this).query(Uri.parse("content://i.test.o2.provider"),null,null,null,null)
+            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.nativelib.MainActivity")))
+//            ProviderService.getInstance(this).query(Uri.parse("content://i.test.o2.provider"),null,null,null,null)
 //            contentResolver.call(Uri.parse("content://i.app.o2.provider"),"test","args",null);
         }
         test2.setOnClickListener {

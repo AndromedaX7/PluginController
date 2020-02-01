@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.me.pluginlib.activity.PluginAppCompatActivity
 import kotlinx.android.synthetic.main.activity_image.*
 
-class ImageActivity :AppCompatActivity() {
+class ImageActivity :PluginAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

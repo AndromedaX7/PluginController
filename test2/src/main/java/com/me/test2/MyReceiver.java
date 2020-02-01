@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class MyReceiver extends BroadcastReceiver {
+import com.me.pluginlib.receiver.PluginReceiver;
+
+public class MyReceiver extends PluginReceiver {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void _onReceive(Context context, Intent intent) {
 //        val  context2  = super._onReceive(context, intent)
         String action = intent.getAction();
         Log.e("MyReceiver", "onReceive");

@@ -30,8 +30,6 @@ public class PluginAppCompatActivity extends AppCompatActivity {
             Intent intent = getIntent();
             ActivityInfo activityInfo = intent.getParcelableExtra("ActivityInfo");
             setTheme(activityInfo != null && activityInfo.theme != 0 ? activityInfo.theme : getApplicationInfo().theme);
-
-
         }
 
         if (PluginManager.sApplicationContext != null) {

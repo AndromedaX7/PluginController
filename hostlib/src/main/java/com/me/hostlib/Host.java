@@ -6,20 +6,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ComponentInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
 import com.me.hostlib.plugin.ActivitySlotManager;
+import com.me.hostlib.plugin.AndroidManifest;
+import com.me.hostlib.plugin.ManifestParser;
 import com.me.hostlib.plugin.ServiceCache;
 import com.me.hostlib.plugin.ServiceSlotManager;
 import com.me.hostlib.plugin.SlotManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 public class Host {
 
     private static Host instance;
+
+    private Host() {
+    }
 
     public static Host getInstance() {
         if (instance == null) {
@@ -29,9 +38,6 @@ public class Host {
             }
         }
         return instance;
-    }
-
-    private Host() {
     }
 
     private void prepareService(Intent intent) {
@@ -86,12 +92,54 @@ public class Host {
     }
 
     private ActivityInfo getActivity(Intent intent) {
-        String className = intent.getComponent().getClassName();
-        ArrayList<ActivityCache> activityInfo = SlotManager.getInstance().getActivityInfo();
-        for (ActivityCache a : activityInfo) {
-            if (a.getAi().name.equals(className)) {
-                return a.getAi();
+        ComponentName component = intent.getComponent();
+        if (component != null) {
+            String className = component.getClassName();
+            ArrayList<ActivityCache> activityInfo = SlotManager.getInstance().getActivityInfo();
+            for (ActivityCache a : activityInfo) {
+                if (a.getAi().name.equals(className)) {
+                    return a.getAi();
+                }
             }
+        } else {
+            String action = intent.getAction();
+            if (action != null) {
+                HashMap<AndroidManifest.IntentFilter, AndroidManifest.Component> components = ManifestParser.getInstance().getComponents();
+                if (components == null) return null;
+                HashMap<AndroidManifest.IntentFilter, AndroidManifest.Component> byAction = new HashMap<>(ManifestParser.getInstance().findByAction(action, components));
+                if (intent.getCategories() != null && !intent.getCategories().isEmpty()) {
+                    byAction = ManifestParser.getInstance().findByCategory(intent.getCategories(), byAction);
+                }
+                if (byAction.isEmpty()) {
+                    return null;
+                } else {
+                    AndroidManifest.Component cc = null;
+                    for (AndroidManifest.IntentFilter i : byAction.keySet()) {
+                        cc = byAction.get(i);
+                        break;
+                    }
+                    if (cc != null) {
+
+                        Log.w("receive action", action  );
+                        if (intent.getCategories()!=null)
+                        Log.w("receive category ","::"+intent.getCategories().toString());
+                        String name = cc.getName();
+                        ComponentInfo componentInfo = ManifestParser.getInstance().getInfoCache().get(name);
+                        if (componentInfo == null) return null;
+                        if (cc.type() == AndroidManifest.ComponentType.Activity) {
+                            Set<String> categories = intent.setAction(null).getCategories();
+                            if (categories != null) {
+                                categories.clear();
+                            }
+                            intent.setComponent(new ComponentName(Plugins.getInstance().getAppContext(), componentInfo.name));
+
+                            return (ActivityInfo) componentInfo;
+                        } else return null;
+                    }
+                }
+
+            }
+
         }
         return null;
     }
@@ -99,10 +147,12 @@ public class Host {
 
     private ServiceInfo getService(Intent intent) {
         String className = intent.getComponent().getClassName();
-        ArrayList<ServiceCache> serviceInfo = SlotManager.getInstance().getServiceInfo();
-        for (ServiceCache a : serviceInfo) {
-            if (a.getAi().name.equals(className)) {
-                return a.getAi();
+        if (className!=null) {
+            ArrayList<ServiceCache> serviceInfo = SlotManager.getInstance().getServiceInfo();
+            for (ServiceCache a : serviceInfo) {
+                if (a.getAi().name.equals(className)) {
+                    return a.getAi();
+                }
             }
         }
         return null;
@@ -120,16 +170,17 @@ public class Host {
         return false;
     }
 
-    public boolean bindService (Context c , Intent intent , ServiceConnection conn ,int flag){
+    public boolean bindService(Context c, Intent intent, ServiceConnection conn, int flag) {
         prepareService(intent);
-        c.bindService(intent,conn,flag);
+        c.bindService(intent, conn, flag);
         return true;
     }
 
-    public boolean unbindService(Context c ,ServiceConnection conn){
+    public boolean unbindService(Context c, ServiceConnection conn) {
         c.unbindService(conn);
         return true;
     }
+
     public void cleanServiceSlot(String name) {
         ServiceSlotManager.getInstance().cleanServiceSlot(name);
     }

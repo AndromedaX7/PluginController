@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.me.host">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,32 +18,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityS1"/>
-        <activity android:name=".ActivityS2"/>
-        <activity android:name=".ActivityS3"/>
-        <activity android:name=".ActivityS4"/>
-        <activity android:name=".ActivityS5"/>
-        <activity android:name=".ActivityS6"/>
-        <activity android:name=".ActivityS7"/>
-        <activity android:name=".ActivityS8"/>
-        <activity android:name=".ActivityS9"/>
-        <activity android:name=".ActivityS10"/>
-        
-        
-        <service android:name=".ServiceS1"/>
-        <service android:name=".ServiceS2"/>
-        <service android:name=".ServiceS3"/>
-        <service android:name=".ServiceS4"/>
-        <service android:name=".ServiceS5"/>
-        <service android:name=".ServiceS6"/>
-        <service android:name=".ServiceS7"/>
-        <service android:name=".ServiceS8"/>
-        <service android:name=".ServiceS9"/>
-        <service android:name=".ServiceS10"/>
-        <receiver android:name=".Receiver">
+<!--        <activity android:name=".ActivityS1"/>-->
+<!--        <activity android:name=".ActivityS2"/>-->
+<!--        <activity android:name=".ActivityS3"/>-->
+<!--        <activity android:name=".ActivityS4"/>-->
+<!--        <activity android:name=".ActivityS5"/>-->
+<!--        <activity android:name=".ActivityS6"/>-->
+<!--        <activity android:name=".ActivityS7"/>-->
+<!--        <activity android:name=".ActivityS8"/>-->
+<!--        <activity android:name=".ActivityS9"/>-->
+<!--        <activity android:name=".ActivityS10"/>-->
 
-        </receiver>
-        <provider
+
+<!--        <service android:name=".ServiceS1"/>-->
+<!--        <service android:name=".ServiceS2"/>-->
+<!--        <service android:name=".ServiceS3"/>-->
+<!--        <service android:name=".ServiceS4"/>-->
+<!--        <service android:name=".ServiceS5"/>-->
+<!--        <service android:name=".ServiceS6"/>-->
+<!--        <service android:name=".ServiceS7"/>-->
+<!--        <service android:name=".ServiceS8"/>-->
+<!--        <service android:name=".ServiceS9"/>-->
+<!--        <service android:name=".ServiceS10"/>-->
+        <receiver android:name=".Receiver"/>
+
+        <provider android:process="com.me.host.other"
             android:name="com.me.host.MyContentProvider"
             android:authorities="i.app.o2.provider"
             android:enabled="true"

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class AndroidManifest {
     private String packages;
+    private Application application;
 
     public String getPackage() {
         return packages;
@@ -13,8 +14,6 @@ public class AndroidManifest {
         this.packages = packages;
     }
 
-    private Application application;
-
     public Application getApplication() {
         return application;
     }
@@ -23,11 +22,25 @@ public class AndroidManifest {
         this.application = application;
     }
 
-    public static class Application {
+    public enum ComponentType {
+        Unknown,
+        Activity,
+        Service,
+        Receiver,
+        Application,
+        Provider
+    }
+
+    public static class Application extends Component {
         private ArrayList<Component> activity = new ArrayList<>();
         private ArrayList<Component> service = new ArrayList<>();
         private ArrayList<Component> receiver = new ArrayList<>();
         private ArrayList<Component> provider = new ArrayList<>();
+
+        @Override
+        public ComponentType type() {
+            return ComponentType.Application;
+        }
 
         public ArrayList<Component> getActivity() {
             return activity;
@@ -47,18 +60,31 @@ public class AndroidManifest {
     }
 
     public static class Activity extends Component {
+        @Override
+        public ComponentType type() {
+            return ComponentType.Activity;
+        }
     }
 
     public static class Service extends Component {
-
+        @Override
+        public ComponentType type() {
+            return ComponentType.Service;
+        }
     }
 
     public static class Receiver extends Component {
-
+        @Override
+        public ComponentType type() {
+            return ComponentType.Receiver;
+        }
     }
 
     public static class Provider extends Component {
-
+        @Override
+        public ComponentType type() {
+            return ComponentType.Provider;
+        }
     }
 
     public static class Component {
@@ -66,6 +92,10 @@ public class AndroidManifest {
         private boolean enabled;
         private boolean exported;
         private ArrayList<IntentFilter> intentFilters = new ArrayList<>();
+
+        public ComponentType type() {
+            return ComponentType.Unknown;
+        }
 
         public boolean isEnabled() {
             return enabled;

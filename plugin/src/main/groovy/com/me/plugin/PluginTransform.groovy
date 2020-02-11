@@ -49,28 +49,6 @@ class PluginTransform extends Transform {
 
             input.jarInputs.each { JarInput jar ->
                 println(jar.file.absolutePath)
-//                if (jar.name.startsWith("androidx.appcompat:appcompat:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//                if (jar.name.startsWith("android.local.jars:pluginlib")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//                if (jar.name.startsWith("org.jetbrains.kotlin:kotlin-stdlib:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//
-//                if (jar.name.startsWith("org.jetbrains.kotlin:kotlin-stdlib-common:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//                if (jar.name.startsWith("org.jetbrains.kotlin:kotlin-android-extensions-runtime:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//                if (jar.name.startsWith(" org.jetbrains.kotlin:kotlin-stdlib-jdk7:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
-//                if (jar.name.startsWith(" org.jetbrains.kotlin:kotlin-stdlib-jdk7:")) {
-//                    classPool.appendClassPath(jar.file.absolutePath)
-//                }
                 classPool.insertClassPath(jar.file.absolutePath)
                 def jarName = jar.name
                 if (jarName.endsWith('.jar')) {

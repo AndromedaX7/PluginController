@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static com.me.pluginlib.PluginManager.oProviderService;
 
@@ -78,9 +79,11 @@ public class PMClient {
             return null;
         }
         try {
-            Class classProviderService=oProviderService.getClass();
-//            classProviderService.getDeclaredMethod("call",Uri.class,String.class)
-            return (Bundle) ReflectUtils.ccInvokeMethod(oProviderService, "call", new Class[]{Uri.class,String.class, String.class, Bundle.class}, uri, method, arg, extras);
+//            Class classProviderService = oProviderService.getClass();
+//            Method call = classProviderService.getDeclaredMethod("call", Uri.class, String.class, String.class, Bundle.class);
+//            call.setAccessible(true);
+//            call.invoke(oProviderService, uri, method, arg, extras);
+           return (Bundle)   ReflectUtils.ccInvokeMethod(oProviderService, "call", new Class[]{Uri.class,String.class, String.class, Bundle.class}, uri, method, arg, extras);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

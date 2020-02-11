@@ -24,8 +24,6 @@ public class SlotManager {
     private final ArrayList<ActivityCache> activityInfo = new ArrayList<>();
     private final ArrayList<ServiceCache> serviceInfo = new ArrayList<>();
 
-    //    private ArrayList<ActivityCache> activityInfo=new ArrayList<>();
-//    private ArrayList<ActivityCache> activityInfo=new ArrayList<>();
     public static SlotManager getInstance() {
         if (instance == null) {
             synchronized (SlotManager.class) {

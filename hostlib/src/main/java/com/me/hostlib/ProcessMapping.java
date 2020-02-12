@@ -22,7 +22,7 @@ public class ProcessMapping extends ContentProvider {
     public static final String findRealClassName = "findRealClassName";
     public static final String mappingActivity = "mappingActivity";
     public static final String mappingService = "mappingService";
-    public static boolean multiProcess = false;
+    public static boolean multiProcess = true;
     private HashMap<String, String> mapping = new HashMap<>();
     private HashMap<String, String> runAppMapping = new HashMap<>();
     private HashMap<String, String> hostActivityMap = new HashMap<>();

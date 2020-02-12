@@ -1,5 +1,6 @@
 package com.me.hostlib;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -12,12 +13,10 @@ import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
-import com.me.hostlib.plugin.ActivitySlotManager;
 import com.me.hostlib.plugin.ManifestParser;
 import com.me.hostlib.plugin.ProviderService;
 import com.me.hostlib.plugin.ReceiverParser;
@@ -42,19 +41,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import dalvik.system.DexClassLoader;
 
 public class Plugins {
     public static final int PLUGIN_INSTALL = 65534;
     private static final String TAG = "Plugins";
-    private static Handler handler;
     private static volatile Plugins sPlugins;
     private static HashMap<String, Context> allContext = new HashMap<>();
+    private Handler handler;
     private HashMap<String, ClassLoader> mClassLoader = new HashMap<>();
     private boolean mPatchClassLoader = false;
     private boolean mLoadPlugin = false;
     private Context initContext;
+    private ArrayList<String> cmd = new ArrayList<>();
+    private ArrayList<String> changed = new ArrayList<>();
 
     private Plugins() {
     }
@@ -72,19 +74,17 @@ public class Plugins {
 
     public static void init(final Application application) {
         Plugins.getInstance().initContext = application;
-        ActivitySlotManager.setPackageName(application.getPackageName());
-        ServiceSlotManager.setPackageName(application.getPackageName());
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                switch (msg.what) {
-                    case PLUGIN_INSTALL:
-                        handlePackages(application, msg);
-                        break;
-                }
-                return true;
-            }
-        });
+//        Plugins.getInstance().handler = new Handler(new Handler.Callback() {
+//            @Override
+//            public boolean handleMessage(Message msg) {
+//                switch (msg.what) {
+//                    case PLUGIN_INSTALL:
+//                        handlePackages(application, msg);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         Plugins plugins = getInstance();
 //        if (!sPlugins.isPatchClassLoader()) {
         boolean b = PatchClassLoaderUtils.patch(application);
@@ -99,9 +99,10 @@ public class Plugins {
 
     }
 
-    private static void handlePackages(Application context, Message msg) {
+    private static void handlePackages(Application context, PackageArchiveData p) {
+        Log.e("process", Plugins.getInstance()._getProcessName());
+        Log.e("Thread", Thread.currentThread().getName());
         try {
-            PackageArchiveData p = (PackageArchiveData) msg.obj;
             DexClassLoader classLoader = new DexClassLoader(p.getDexPath(), p.getOpt(), p.getLibs(), context.getClassLoader().getParent());
             Plugins.getInstance().installClassLoader(p.getPluginName(), classLoader);
 
@@ -184,11 +185,13 @@ public class Plugins {
         }
     }
 
-    public static void sendAppInfo(String pluginName, String dexPath, String opt, String libs) {
-        Message msg = new Message();
-        msg.what = PLUGIN_INSTALL;
-        msg.obj = new PackageArchiveData(pluginName, dexPath, opt, libs);
-        handler.sendMessage(msg);
+    public void sendAppInfo(final String pluginName, final String dexPath, final String opt, final String libs) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                handlePackages((Application) initContext, new PackageArchiveData(pluginName, dexPath, opt, libs));
+            }
+        });
     }
 
     public Context getAppContext() {
@@ -228,6 +231,18 @@ public class Plugins {
         Class<?> clazz = null;
         String className = SlotManager.getInstance().findClass(name);
         String pluginName = SlotManager.getInstance().findPluginName(className);
+      /*  if (pluginName == null) {
+                Set<String> loaderKey = mClassLoader.keySet();
+                for (String key : loaderKey) {
+                    try {
+                        clazz = mClassLoader.get(key).loadClass(className);
+                    }catch (ClassNotFoundException e){
+                        e.printStackTrace();
+                    }
+                    if (clazz != null)
+                        return clazz;
+                }
+        } else*/
         if (!mClassLoader.isEmpty() && !TextUtils.isEmpty(pluginName)) {
             clazz = mClassLoader.get(pluginName).loadClass(className);
         }
@@ -301,17 +316,34 @@ public class Plugins {
         }
     }
 
+
+    String _getProcessName() {
+        int myPid = android.os.Process.myPid();
+        ActivityManager am = (ActivityManager) initContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo proc : runningAppProcesses) {
+            if (proc.pid == myPid) {
+                return proc.processName;
+            }
+        }
+
+
+        return "";
+    }
+
+
     public void onApplicationCreateLocked() {
+
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            initContext.startForegroundService(new Intent(initContext, PluginManagerService.class));
 //        } else
 //            initContext.startService(new Intent(initContext, PluginManagerService.class));
-
-        Log.e("pms ", "onCreate");
-        File cmd = initContext. getFileStreamPath("load.cmd");
+        Log.e("current process", _getProcessName());
+        File cmd = initContext.getFileStreamPath("load.cmd");
         if (!cmd.exists()) {
             try {
-                InputStream open =initContext. getAssets().open("load.cmd");
+                InputStream open = initContext.getAssets().open("load.cmd");
                 OutputStream out = new FileOutputStream(cmd);
                 int available = open.available();
                 byte[] buff = new byte[available];
@@ -347,10 +379,12 @@ public class Plugins {
             e.printStackTrace();
         }
     }
+
     /**
      * i:assets:// 加载assets
      * i:content://(fileprovider) 指定文件
      * r:name
+     *
      * @param line
      */
     private void parseCommand(String line) {
@@ -386,10 +420,6 @@ public class Plugins {
             }
         }
     }
-
-    private ArrayList<String> cmd = new ArrayList<>();
-
-    private ArrayList<String> changed = new ArrayList<>();
 
     public void changeInstallCommand() {
         for (int i = 0; i < cmd.size(); i++) {
@@ -432,4 +462,10 @@ public class Plugins {
             e.printStackTrace();
         }
     }
+
+    public void setNewHandler() {
+        Log.e("process", _getProcessName());
+        this.handler = new Handler();
+    }
+
 }

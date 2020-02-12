@@ -21,25 +21,10 @@ public class ServiceSlotManager {
     }
 
     private ServiceSlotManager() {
-        sHostServiceMap.put(sPackageName + ".ServiceS1", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS2", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS3", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS4", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS5", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS6", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS7", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS8", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS9", null);
-        sHostServiceMap.put(sPackageName + ".ServiceS10", null);
+
     }
 
 
-    static HashMap<String, String> sHostServiceMap = new HashMap<>();
-    private static String sPackageName;
-
-    public static void setPackageName(String sPackageName) {
-        ServiceSlotManager.sPackageName = sPackageName;
-    }
 
 
     public String findServiceClass(String slotName) {

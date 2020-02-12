@@ -210,7 +210,7 @@ public class ParseThread extends Thread {
             switch (operation & OP_MOUNT_PLUGIN) {
                 case OP_MOUNT_PLUGIN: {
                     String dexPath = new File(pluginInstallPath, pluginName).getAbsolutePath();
-                    Plugins.sendAppInfo(pluginName, dexPath, opt, libs);
+                    Plugins.getInstance().sendAppInfo(pluginName, dexPath, opt, libs);
                     break;
                 }
             }

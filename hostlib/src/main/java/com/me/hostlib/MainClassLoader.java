@@ -75,7 +75,6 @@ public class MainClassLoader extends PathClassLoader {
     }
 
 
-
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         Log.e("load class:", name);
@@ -86,7 +85,11 @@ public class MainClassLoader extends PathClassLoader {
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
         Class<?> c = null;
 
-        c = Plugins.getInstance().loadClass(className, resolve);
+        if ("com.me.hostlib.ProcessMapping".equals(className)) {
+            c = mOrig.loadClass(className);
+        }
+        if (c == null)
+            c = Plugins.getInstance().loadClass(className, resolve);
         if (c != null) {
             return c;
         }
@@ -97,7 +100,7 @@ public class MainClassLoader extends PathClassLoader {
                 return c;
             }
         } catch (Throwable e) {
-            Log.w("can not load class:",className);
+            Log.w("can not load class:", className);
         }
 
         return super.loadClass(className, resolve);

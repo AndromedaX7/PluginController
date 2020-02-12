@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Process
+import android.util.Log
 import com.me.hostlib.Plugins
 
 
@@ -13,13 +14,15 @@ class TestApplication : Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         Plugins.init(this)
+        Log.e("attached" ,"App attached")
     }
 
     override fun onCreate() {
         super.onCreate()
 //        Plugins.getInstance().installOrLoad(this,"nativelib-debug.apk")
 //        Plugins.getInstance().installOrLoad(this,"cp-2.9.0.apk")
-        Plugins.getInstance().onApplicationCreateLocked()
+        Log.e("process", _getProcessName())
+        Log.e("onCreate","start")
     }
 
     @Throws(PackageManager.NameNotFoundException::class)
@@ -63,8 +66,6 @@ class TestApplication : Application() {
                 return proc.processName
             }
         }
-
-
         return ""
     }
 

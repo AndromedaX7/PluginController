@@ -6,9 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-
-public class ProcessP1 extends ContentProvider {
-    public ProcessP1() {
+public class ProcessP4 extends ContentProvider {
+    public ProcessP4() {
     }
 
     @Override
@@ -31,7 +30,7 @@ public class ProcessP1 extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Plugins.getInstance().setNewHandler();
+
         Plugins.getInstance().onApplicationCreateLocked();
         Log.e("Plugin hash",Plugins.getInstance().hashCode()+"--");
         return true ;

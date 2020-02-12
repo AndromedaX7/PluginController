@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                 Intent().setComponent(ComponentName(this.packageName, "com.me.test2.ThemeActivity"))
             )
         }
+//        startService(Intent(this,MyService::class.java))
     }
 
 }

@@ -5,14 +5,29 @@
     <application>
         <provider
             android:name=".ProcessP1" android:process=":p1"
-            android:authorities="$applicationId.p1"
+            android:authorities="${applicationId}.p1"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP2" android:process=":p2"
+            android:authorities="${applicationId}.p2"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP3" android:process=":p3"
+            android:authorities="${applicationId}.p3"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP4" android:process=":p4"
+            android:authorities="${applicationId}.p4"
+            android:enabled="true"
+            android:exported="true"/>
         <provider
             android:name=".ProcessMapping"
             android:authorities="${applicationId}.mapping"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="true"/>
 
         <service android:name=".PluginManagerService" />
     </application>

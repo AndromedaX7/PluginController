@@ -24,6 +24,7 @@ import java.util.Set;
 
 public class Host {
 
+    private static final String TAG = "Host";
     private static Host instance;
 
     private Host() {
@@ -119,9 +120,9 @@ public class Host {
                     }
                     if (cc != null) {
 
-                        Log.w("receive action", action);
+                        Log.i(TAG, "receive action:" + action);
                         if (intent.getCategories() != null)
-                            Log.w("receive category ", "::" + intent.getCategories().toString());
+                            Log.i(TAG, "receive category:" + intent.getCategories().toString());
                         String name = cc.getName();
                         ComponentInfo componentInfo = ManifestParser.getInstance().getInfoCache().get(name);
                         if (componentInfo == null) return null;

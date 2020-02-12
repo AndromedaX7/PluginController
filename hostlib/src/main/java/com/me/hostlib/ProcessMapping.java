@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,14 +16,13 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class ProcessMapping extends ContentProvider {
-
     public static final String mappingProcess = "mappingProcess";
     public static final String clearActivitySlot = "clearActivitySlot";
     public static final String clearServiceSlot = "clearServiceSlot";
     public static final String findRealClassName = "findRealClassName";
     public static final String mappingActivity = "mappingActivity";
     public static final String mappingService = "mappingService";
-    public static boolean multiProcess = true;
+    public static boolean multiProcess = false;
     private HashMap<String, String> mapping = new HashMap<>();
     private HashMap<String, String> runAppMapping = new HashMap<>();
     private HashMap<String, String> hostActivityMap = new HashMap<>();
@@ -36,19 +34,17 @@ public class ProcessMapping extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Unsupported Operation");
     }
 
     @Override
     public String getType(Uri uri) {
-        // at the given URI.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Unsupported Operation");
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Unsupported Operation");
     }
 
     @Override
@@ -57,14 +53,14 @@ public class ProcessMapping extends ContentProvider {
         Plugins.getInstance().onApplicationCreateLocked();
         String packageName = getContext().getPackageName();
 
-        Log.e("Plugin hash", Plugins.getInstance().hashCode() + "--");
+
         if (multiProcess) {
             for (int i = 1; i <= 10; i++) {
                 mapping.put("p" + i, "");
             }
-            for (int i = 1; i <= 10; i++) {
-                runAppMapping.put("app" + i, "");
-            }
+//            for (int i = 1; i <= 10; i++) {
+//                runAppMapping.put("app" + i, "");
+//            }
         }
         for (int i = 1; i <= 10; i++) {
             hostActivityMap.put(packageName + ".ActivityS" + i, null);
@@ -84,8 +80,7 @@ public class ProcessMapping extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Unsupported Operation");
     }
 
     @Nullable
@@ -93,16 +88,13 @@ public class ProcessMapping extends ContentProvider {
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
         Bundle bundle = new Bundle();
         switch (method) {
-//            case mappingProcess:
-//                bundle.putString(mappingProcess, findProcessMapping(arg));
-//                return bundle;
-
             case mappingActivity:
                 if (extras == null) return null;
                 ActivityInfo activityInfo = extras.getParcelable(mappingActivity);
                 if (activityInfo == null) return null;
                 bundle.putString(mappingActivity, mappingActivity(activityInfo));
                 return bundle;
+
             case mappingService:
                 if (extras == null) return null;
                 ServiceInfo serviceInfo = extras.getParcelable(mappingService);
@@ -146,8 +138,8 @@ public class ProcessMapping extends ContentProvider {
         return bundle;
     }
 
-    private String findProcessMapping( String from,String processName) {
-        if (from==null) from=processName;
+    private String findProcessMapping(String from, String processName) {
+        if (from == null) from = processName;
         for (String m : mapping.keySet()) {
             if (mapping.get(m).equals(from)) {
                 return m;
@@ -165,11 +157,11 @@ public class ProcessMapping extends ContentProvider {
 
     private String mappingActivity(ActivityInfo activityInfo) {
         String processName = activityInfo.processName;
-        String appProcess = activityInfo.applicationInfo.name;
+        String appProcess = activityInfo.packageName;
         String prefix = "";
         if (multiProcess) {
             if (processName != null || !appProcess.equals(getContext().getPackageName())) {
-                prefix = findProcessMapping(processName,appProcess);
+                prefix = findProcessMapping(processName, appProcess);
                 if (TextUtils.isEmpty(mapping.get(prefix))) {
                     Uri uri = Uri.parse("content://" + getContext().getPackageName() + "." + prefix);
                     getContext().getContentResolver().query(uri, null, null, null, null);
@@ -196,10 +188,10 @@ public class ProcessMapping extends ContentProvider {
 
     private String mappingService(ServiceInfo serviceInfo) {
         String processName = serviceInfo.processName;
-        String appProcess = serviceInfo.applicationInfo.name;
+        String appProcess = serviceInfo.packageName;
         String prefix = "";
         if (multiProcess) {
-            if (!TextUtils.isEmpty(processName)|| !appProcess.equals(getContext().getPackageName())) {
+            if (!TextUtils.isEmpty(processName) || !appProcess.equals(getContext().getPackageName())) {
                 prefix = findProcessMapping(processName, processName);
                 if (TextUtils.isEmpty(mapping.get(prefix))) {
                     Uri uri = Uri.parse("content://" + getContext().getPackageName() + "." + prefix);

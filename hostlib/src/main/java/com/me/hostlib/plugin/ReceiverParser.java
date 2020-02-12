@@ -85,7 +85,7 @@ public class ReceiverParser {
         }
         /////
         for (ActivityInfo receiverInfo : receivers) {
-            Log.w(TAG,"Plugins ActivityInfo receivers>" + receiverInfo.name + " " + receiverInfo.flags);
+            Log.i(TAG,"Plugins ActivityInfo receivers>" + receiverInfo.name + " " + receiverInfo.flags);
             try {
                 Class receiver =  Plugins.getInstance().getClassLoader(pluginName).loadClass(receiverInfo.name);
                 IntentFilter intentFilter = new IntentFilter();
@@ -95,7 +95,7 @@ public class ReceiverParser {
                         ArrayList<String> actionList = attributeMap.get("action");
                         if (actionList != null) {
                             for (String action : actionList) {
-                                Log.w(TAG,"receiver: " + receiverInfo.name + " action: " + action);
+                                Log.i(TAG,"receiver: " + receiverInfo.name + " action: " + action);
                                 intentFilter.addAction(action);
                             }
                         }
@@ -104,7 +104,7 @@ public class ReceiverParser {
                         ArrayList<String> categoryList = attributeMap.get("category");
                         if (categoryList != null) {
                             for (String category : categoryList) {
-                                Log.w(TAG,"receiver: " + receiverInfo.name + " category: " + category);
+                                Log.i(TAG,"receiver: " + receiverInfo.name + " category: " + category);
                                 intentFilter.addCategory(category);
                             }
                         }
@@ -186,7 +186,7 @@ public class ReceiverParser {
         for (SubReceiver subReceiver : sBroadcastReceiverList) {
             context.getApplicationContext().registerReceiver(subReceiver.getReceiver(), subReceiver.getFilter() != null ?
                     subReceiver.getFilter() : new IntentFilter());
-            Log.w(TAG,"subReceiver>" + subReceiver.getReceiver().getClass().getSimpleName());
+            Log.i(TAG,"subReceiver>" + subReceiver.getReceiver().getClass().getSimpleName());
         }
     }
 

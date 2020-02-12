@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class ManifestParser {
+    private static final String TAG = "ManifestParser";
     private static ManifestParser instance;
     private ArrayList<AndroidManifest> manifests = new ArrayList<>();
     //  key  plugin name ,
@@ -119,7 +120,7 @@ public class ManifestParser {
                 iftc.put(ift, c);
             }
         }
-        Log.e("parse src ok", "!!");
+        Log.i(TAG, "parse src ok !!");
     }
 
     public HashMap<String, ComponentInfo> getInfoCache() {
@@ -148,59 +149,59 @@ public class ManifestParser {
 //                        }
                         if (parser.getName().equals("manifest")) {
                             String aPackage = parser.getAttributeValue(null, "package");
-                            Log.w("package", aPackage);
+                            Log.i(TAG, "package:" + aPackage);
                             manifest.setPackage(aPackage);
                         } else if (parser.getName().equals("application")) {
                             application.setName(parser.getAttributeValue(publicNamespace, "name"));
-                            Log.w("application", "================ start =================");
+                            Log.i(TAG, "application: ================ start =================");
                         } else if (parser.getName().equals("activity")) {
                             currentComponent = new AndroidManifest.Activity();
                             application.getActivity().add(currentComponent);
                             currentComponent.setName(parser.getAttributeValue(publicNamespace, "name"));
-                            Log.w("activity", currentComponent.getName());
+                            Log.i(TAG, "activity:" + currentComponent.getName());
                         } else if (parser.getName().equals("service")) {
                             currentComponent = new AndroidManifest.Service();
                             currentComponent.setName(parser.getAttributeValue(publicNamespace, "name"));
                             application.getService().add(currentComponent);
-                            Log.w("service", currentComponent.getName());
+                            Log.i(TAG,"service:"+ currentComponent.getName());
                         } else if (parser.getName().equals("receiver")) {
                             currentComponent = new AndroidManifest.Receiver();
                             currentComponent.setName(parser.getAttributeValue(publicNamespace, "name"));
                             application.getReceiver().add(currentComponent);
-                            Log.w("receiver", currentComponent.getName());
+                            Log.i(TAG,"receiver:"+ currentComponent.getName());
                         } else if (parser.getName().equals("provider")) {
                             currentComponent = new AndroidManifest.Provider();
                             currentComponent.setName(parser.getAttributeValue(publicNamespace, "name"));
                             application.getProvider().add(currentComponent);
-                            Log.w("provider", currentComponent.getName());
+                            Log.i(TAG,"provider:"+ currentComponent.getName());
                         } else if (parser.getName().equals("intent-filter")) {
                             ArrayList<AndroidManifest.IntentFilter> intentFilters = currentComponent.getIntentFilters();
                             ift = new AndroidManifest.IntentFilter();
                             intentFilters.add(ift);
-                            Log.w("intent-filter", "================ start =================");
+                            Log.i(TAG,"intent-filter:"+ "================ start =================");
                         } else if (parser.getName().equals("action")) {
                             ArrayList<String> actions = ift.getAction();
                             String action = parser.getAttributeValue(publicNamespace, "name");
                             actions.add(action);
-                            Log.w("action", action);
+                            Log.i(TAG,"action:"+ action);
                         } else if (parser.getName().equals("category")) {
                             ArrayList<String> categories = ift.getCategory();
                             String category = parser.getAttributeValue(publicNamespace, "name");
                             categories.add(category);
-                            Log.w("category", category);
+                            Log.i(TAG,"category:"+ category);
                         } else if (parser.getName().equals("data")) {
                             String data = "----";
-                            Log.w("data", data);
+                            Log.i(TAG,"data"+ data);
                         }
                     }
                     break;
                     case XmlPullParser.END_TAG: {
                         if (parser.getName().equals("manifest")) {
                         } else if (parser.getName().equals("application")) {
-                            Log.w("application", "================ end =================");
+                            Log.i(TAG,"application:================ end =================");
                         } else if (parser.getName().equals("intent-filter")) {
                             ift = null;
-                            Log.w("intent-filter", "================ end =================");
+                            Log.i(TAG,"intent-filter:================ end =================");
                         }
                     }
                     break;

@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity() {
             val lastPathSegment = parse.lastPathSegment
             Log.e("lastPathSegment ", lastPathSegment ?: "")
             //            Host.getInstance().startService(this,Intent().setComponent(ComponentName(this.packageName,"com.me.test2.MyService")))
-            Host.getInstance().startActivity(this, Intent("action.image"))
+//            Host.getInstance().startActivity(this, Intent("action.image"))
 //            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.me.nativelib.MainActivity")))
 //            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.yhkj.glasshelper.MainActivity")))
-//            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.yhkj.glasshelper.activities.HelperMainActivity")))
+            Host.getInstance().startActivity(this, Intent().setComponent(ComponentName(this.packageName,"com.yhkj.glasshelper.activities.HelperMainActivity")))
 //            ProviderService.getInstance(this).query(Uri.parse("content://i.test.o2.provider"),null,null,null,null)
 //            contentResolver.call(Uri.parse("content://i.app.o2.provider"),"test","args",null);
         }

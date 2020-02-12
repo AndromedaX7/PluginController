@@ -77,7 +77,7 @@ public class MainClassLoader extends PathClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        Log.e("load class:", name);
+        Log.i(TAG,"load class:"+ name);
         return super.loadClass(name);
     }
 
@@ -100,7 +100,7 @@ public class MainClassLoader extends PathClassLoader {
                 return c;
             }
         } catch (Throwable e) {
-            Log.w("can not load class:", className);
+            Log.w(TAG,"can not load class:"+className);
         }
 
         return super.loadClass(className, resolve);

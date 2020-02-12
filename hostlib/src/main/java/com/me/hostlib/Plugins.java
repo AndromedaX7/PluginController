@@ -46,7 +46,6 @@ import dalvik.system.DexClassLoader;
 
 public class Plugins {
     public static final int PLUGIN_INSTALL = 65534;
-    private static final String TAG = "Plugins";
     private static volatile Plugins sPlugins;
     private static HashMap<String, Context> allContext = new HashMap<>();
     private Handler handler;
@@ -58,6 +57,10 @@ public class Plugins {
     private ArrayList<String> changed = new ArrayList<>();
 
     private Plugins() {
+    }
+
+    private static String tag() {
+        return "Plugins p:" + Plugins.getInstance().getProcessName() + " t:" + Thread.currentThread().getName();
     }
 
     public static Plugins getInstance() {
@@ -73,34 +76,16 @@ public class Plugins {
 
     public static void init(final Application application) {
         Plugins.getInstance().initContext = application;
-//        Plugins.getInstance().handler = new Handler(new Handler.Callback() {
-//            @Override
-//            public boolean handleMessage(Message msg) {
-//                switch (msg.what) {
-//                    case PLUGIN_INSTALL:
-//                        handlePackages(application, msg);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
-        Plugins plugins = getInstance();
-//        if (!sPlugins.isPatchClassLoader()) {
         boolean b = PatchClassLoaderUtils.patch(application);
-        plugins.setPatchClassLoader(b);
         if (b) {
-            Log.i(TAG, "Patch ClassLoader success");
+            Log.i(tag(), "Patch ClassLoader success");
         } else {
-            Log.i(TAG, "Patch ClassLoader false");
+            Log.i(tag(), "Patch ClassLoader false");
         }
-//        }
-
-
     }
 
     private static void handlePackages(Application context, PackageArchiveData p) {
-        Log.e("process", Plugins.getInstance()._getProcessName());
-        Log.e("Thread", Thread.currentThread().getName());
+        Log.i(tag(), "HandlePackages");
         try {
             DexClassLoader classLoader = new DexClassLoader(p.getDexPath(), p.getOpt(), p.getLibs(), context.getClassLoader().getParent());
             Plugins.getInstance().installClassLoader(p.getPluginName(), classLoader);
@@ -117,7 +102,7 @@ public class Plugins {
             if (activities != null) {
                 ArrayList<ActivityCache> activityCaches = new ArrayList<>();
                 for (ActivityInfo activity : activities) {
-                    Log.e("activity className", activity.name);
+                    Log.i(tag(), "activity className:" + activity.name);
                     activityCaches.add(new ActivityCache(p.getPluginName(), activity));
                 }
                 SlotManager.getInstance().setActivityInfo(activityCaches);
@@ -126,7 +111,7 @@ public class Plugins {
             if (services != null) {
                 ArrayList<ServiceCache> serviceCaches = new ArrayList<>();
                 for (ServiceInfo service : services) {
-                    Log.e("service className", service.name);
+                    Log.i(tag(), "service className:" + service.name);
                     serviceCaches.add(new ServiceCache(p.getPluginName(), service));
                 }
                 SlotManager.getInstance().setServiceInfo(serviceCaches);
@@ -143,7 +128,7 @@ public class Plugins {
 
             Class<?> appClass = null;
 
-            Log.e("appName", "::" + appInfo.name);
+            Log.v("load app name", "::" + appInfo.name);
             if (!TextUtils.isEmpty(appInfo.name)) {
 
                 appClass = getInstance().mClassLoader.get(p.getPluginName()).loadClass(appInfo.name);
@@ -230,18 +215,6 @@ public class Plugins {
         Class<?> clazz = null;
         String className = SlotManager.getInstance().findClass(name);
         String pluginName = SlotManager.getInstance().findPluginName(className);
-      /*  if (pluginName == null) {
-                Set<String> loaderKey = mClassLoader.keySet();
-                for (String key : loaderKey) {
-                    try {
-                        clazz = mClassLoader.get(key).loadClass(className);
-                    }catch (ClassNotFoundException e){
-                        e.printStackTrace();
-                    }
-                    if (clazz != null)
-                        return clazz;
-                }
-        } else*/
         if (!mClassLoader.isEmpty() && !TextUtils.isEmpty(pluginName)) {
             clazz = mClassLoader.get(pluginName).loadClass(className);
         }
@@ -316,7 +289,7 @@ public class Plugins {
     }
 
 
-    String _getProcessName() {
+    String getProcessName() {
         int myPid = android.os.Process.myPid();
         ActivityManager am = (ActivityManager) initContext.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
@@ -325,20 +298,12 @@ public class Plugins {
                 return proc.processName;
             }
         }
-
-
         return "";
     }
 
 
     public void onApplicationCreateLocked() {
-
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            initContext.startForegroundService(new Intent(initContext, PluginManagerService.class));
-//        } else
-//            initContext.startService(new Intent(initContext, PluginManagerService.class));
-        Log.e("current process", _getProcessName());
+        Log.i(tag(), "onApplicationCreateLocked");
         File cmd = initContext.getFileStreamPath("load.cmd");
         if (!cmd.exists()) {
             try {
@@ -356,19 +321,15 @@ public class Plugins {
             }
 
         }
-
         try {
             LineNumberReader reader = new LineNumberReader(new FileReader(cmd));
             String line = null;
-
             do {
                 line = reader.readLine();
-                Log.e(TAG, "onCreate: " + line);
                 if (line != null) {
                     this.cmd.add(line);
                     parseCommand(line);
                 }
-
             } while (line != null);
             removeDeleteCommand();
             changeInstallCommand();
@@ -444,9 +405,8 @@ public class Plugins {
     public void genNextLoadCommand(File cmd) {
         for (int i = 0; i < this.cmd.size(); i++) {
             if (this.cmd.get(i).contains("\r") || this.cmd.get(i).contains("\n")) {
-                Log.e(TAG, "genNextLoadCommand: has \r or \n");
+                Log.e(tag(), "genNextLoadCommand: has \r or \n");
             }
-            Log.e("cmd ", this.cmd.get(i));
         }
 
         try {
@@ -463,7 +423,7 @@ public class Plugins {
     }
 
     public void setNewHandler() {
-        Log.e("process", _getProcessName());
+        Log.i(tag(), "setNewHandler");
         this.handler = new Handler();
     }
 

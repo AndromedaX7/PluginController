@@ -1,55 +1,17 @@
 package com.me.host
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.os.Process
-import android.util.Log
 import com.me.hostlib.Plugins
 
 
 class TestApplication : Application() {
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         Plugins.init(this)
-        Log.e("attached" ,"App attached")
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-//        Plugins.getInstance().installOrLoad(this,"nativelib-debug.apk")
-//        Plugins.getInstance().installOrLoad(this,"cp-2.9.0.apk")
-        Log.e("process", _getProcessName())
-        Log.e("onCreate","start")
-
-        registerActivityLifecycleCallbacks(object :Application.ActivityLifecycleCallbacks{
-            override fun onActivityPaused(activity: Activity?) {
-                Log.e("activity onCreate",activity?.javaClass?.name)
-            }
-
-            override fun onActivityResumed(activity: Activity?) {
-            }
-
-            override fun onActivityStarted(activity: Activity?) {
-            }
-
-            override fun onActivityDestroyed(activity: Activity?) {
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-            }
-
-            override fun onActivityStopped(activity: Activity?) {
-            }
-
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-            }
-
-        })
     }
 
     @Throws(PackageManager.NameNotFoundException::class)

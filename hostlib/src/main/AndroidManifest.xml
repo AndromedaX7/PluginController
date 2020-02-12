@@ -4,63 +4,63 @@
 
     <application>
         <provider
-            android:name=".ProcessP1" android:process=":p1"
+            android:name=".ProcessProvider$ProcessP1" android:process=":p1"
             android:authorities="${applicationId}.p1"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP2" android:process=":p2"
+            android:name=".ProcessProvider$ProcessP2" android:process=":p2"
             android:authorities="${applicationId}.p2"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP3" android:process=":p3"
+            android:name=".ProcessProvider$ProcessP3" android:process=":p3"
             android:authorities="${applicationId}.p3"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP4" android:process=":p4"
+            android:name=".ProcessProvider$ProcessP4" android:process=":p4"
             android:authorities="${applicationId}.p4"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <provider
-            android:name=".ProcessP5" android:process=":p5"
+            android:name=".ProcessProvider$ProcessP5" android:process=":p5"
             android:authorities="${applicationId}.p5"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP6" android:process=":p6"
+            android:name=".ProcessProvider$ProcessP6" android:process=":p6"
             android:authorities="${applicationId}.p6"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP7" android:process=":p7"
+            android:name=".ProcessProvider$ProcessP7" android:process=":p7"
             android:authorities="${applicationId}.p7"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP8" android:process=":p8"
+            android:name=".ProcessProvider$ProcessP8" android:process=":p8"
             android:authorities="${applicationId}.p8"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <provider
-            android:name=".ProcessP9" android:process=":p9"
+            android:name=".ProcessProvider$ProcessP9" android:process=":p9"
             android:authorities="${applicationId}.p9"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <provider
-            android:name=".ProcessP10" android:process=":p10"
+            android:name=".ProcessProvider$ProcessP10" android:process=":p10"
             android:authorities="${applicationId}.p10"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <provider
             android:name=".ProcessMapping"
             android:authorities="${applicationId}.mapping"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <service android:name=".PluginManagerService" />
     </application>

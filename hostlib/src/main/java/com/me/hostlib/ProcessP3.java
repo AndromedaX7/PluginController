@@ -30,6 +30,7 @@ public class ProcessP3 extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        Plugins.getInstance().setNewHandler();
         Plugins.getInstance().onApplicationCreateLocked();
         Log.e("Plugin hash",Plugins.getInstance().hashCode()+"--");
         return true ;

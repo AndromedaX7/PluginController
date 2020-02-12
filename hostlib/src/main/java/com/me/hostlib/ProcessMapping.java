@@ -24,6 +24,7 @@ public class ProcessMapping extends ContentProvider {
     public static final String findRealClassName = "findRealClassName";
     public static final String mappingActivity = "mappingActivity";
     public static final String mappingService = "mappingService";
+    public static boolean multiProcess = true;
     private HashMap<String, String> mapping = new HashMap<>();
     private HashMap<String, String> runAppMapping = new HashMap<>();
     private HashMap<String, String> hostActivityMap = new HashMap<>();
@@ -57,7 +58,7 @@ public class ProcessMapping extends ContentProvider {
         String packageName = getContext().getPackageName();
 
         Log.e("Plugin hash", Plugins.getInstance().hashCode() + "--");
-        if (false) {
+        if (multiProcess) {
             for (int i = 1; i <= 10; i++) {
                 mapping.put("p" + i, "");
             }
@@ -92,9 +93,9 @@ public class ProcessMapping extends ContentProvider {
     public Bundle call(@NonNull String method, @Nullable String arg, @Nullable Bundle extras) {
         Bundle bundle = new Bundle();
         switch (method) {
-            case mappingProcess:
-                bundle.putString(mappingProcess, findProcessMapping(arg));
-                return bundle;
+//            case mappingProcess:
+//                bundle.putString(mappingProcess, findProcessMapping(arg));
+//                return bundle;
 
             case mappingActivity:
                 if (extras == null) return null;
@@ -145,7 +146,8 @@ public class ProcessMapping extends ContentProvider {
         return bundle;
     }
 
-    private String findProcessMapping(String from) {
+    private String findProcessMapping( String from,String processName) {
+        if (from==null) from=processName;
         for (String m : mapping.keySet()) {
             if (mapping.get(m).equals(from)) {
                 return m;
@@ -163,14 +165,17 @@ public class ProcessMapping extends ContentProvider {
 
     private String mappingActivity(ActivityInfo activityInfo) {
         String processName = activityInfo.processName;
+        String appProcess = activityInfo.applicationInfo.name;
         String prefix = "";
-        if (false) {
-            if (processName != null) {
-                prefix = findProcessMapping(processName);
+        if (multiProcess) {
+            if (processName != null || !appProcess.equals(getContext().getPackageName())) {
+                prefix = findProcessMapping(processName,appProcess);
                 if (TextUtils.isEmpty(mapping.get(prefix))) {
                     Uri uri = Uri.parse("content://" + getContext().getPackageName() + "." + prefix);
                     getContext().getContentResolver().query(uri, null, null, null, null);
-                    mapping.put(prefix, processName);
+                    if (processName != null)
+                        mapping.put(prefix, processName);
+                    else mapping.put(prefix, appProcess);
                 }
             }
         }
@@ -191,14 +196,17 @@ public class ProcessMapping extends ContentProvider {
 
     private String mappingService(ServiceInfo serviceInfo) {
         String processName = serviceInfo.processName;
+        String appProcess = serviceInfo.applicationInfo.name;
         String prefix = "";
-        if (false) {
-            if (!TextUtils.isEmpty(processName)) {
-                prefix = findProcessMapping(processName);
+        if (multiProcess) {
+            if (!TextUtils.isEmpty(processName)|| !appProcess.equals(getContext().getPackageName())) {
+                prefix = findProcessMapping(processName, processName);
                 if (TextUtils.isEmpty(mapping.get(prefix))) {
                     Uri uri = Uri.parse("content://" + getContext().getPackageName() + "." + prefix);
                     getContext().getContentResolver().query(uri, null, null, null, null);
-                    mapping.put(prefix, processName);
+                    if (processName != null)
+                        mapping.put(prefix, processName);
+                    else mapping.put(prefix, appProcess);
                 }
             }
         }

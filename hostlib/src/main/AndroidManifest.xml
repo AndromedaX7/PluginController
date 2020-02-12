@@ -23,6 +23,39 @@
             android:authorities="${applicationId}.p4"
             android:enabled="true"
             android:exported="true"/>
+
+        <provider
+            android:name=".ProcessP5" android:process=":p5"
+            android:authorities="${applicationId}.p5"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP6" android:process=":p6"
+            android:authorities="${applicationId}.p6"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP7" android:process=":p7"
+            android:authorities="${applicationId}.p7"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP8" android:process=":p8"
+            android:authorities="${applicationId}.p8"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <provider
+            android:name=".ProcessP9" android:process=":p9"
+            android:authorities="${applicationId}.p9"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
+            android:name=".ProcessP10" android:process=":p10"
+            android:authorities="${applicationId}.p10"
+            android:enabled="true"
+            android:exported="true"/>
+
         <provider
             android:name=".ProcessMapping"
             android:authorities="${applicationId}.mapping"

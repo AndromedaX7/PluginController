@@ -12,6 +12,12 @@
         android:layout_width="match_parent" android:text="stoptService" android:id="@+id/b"
         android:layout_height="wrap_content"/>
     <Button
+        android:layout_width="match_parent" android:text="startService2" android:id="@+id/a2"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="match_parent" android:text="stoptService2" android:id="@+id/b2"
+        android:layout_height="wrap_content"/>
+    <Button
         android:layout_width="match_parent" android:text="startActivity" android:id="@+id/c"
         android:layout_height="wrap_content"/>
 

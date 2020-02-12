@@ -52,64 +52,33 @@ p.afterEvaluate {
                 String manifestPath = "${dp.asFile.get().absolutePath}/AndroidManifest.xml"
                 def manifest = file(manifestPath).getText()
                 def xml = new XmlParser().parseText(manifest)
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS4'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS5'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS6'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS7'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS8'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS9'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS10'])
 
-
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS1p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS2p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS3p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS4p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS5p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS6p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS7p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS8p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS9p1', 'android:process': ':p1'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS10p1', 'android:process': ':p1'])
-
-
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS1p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS2p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS3p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS4p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS5p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS6p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS7p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS8p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS9p2', 'android:process': ':p2'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS10p2', 'android:process': ':p2'])
-
-
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS1p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS2p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS3p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS4p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS5p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS6p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS7p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS8p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS9p3', 'android:process': ':p3'])
-                xml.application[0].appendNode("activity", ['android:name': '.ActivityS10p3', 'android:process': ':p3'])
-
-
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS1'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS2'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS3'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS4'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS5'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS6'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS7'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS8'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS9'])
-                xml.application[0].appendNode("service", ['android:name': '.ServiceS10'])
+                for (int i = 1; i <= 10; i++) {
+                    xml.application[0].appendNode("activity", ['android:name': ".ActivityS$i"])
+                }
+                for (int i = 1; i < 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        xml.application[0].appendNode("activity", ['android:name': ".ActivityS${j}p${i}", 'android:process': ":p$i"])
+                    }
+                }
+                for (int i = 1; i < 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        xml.application[0].appendNode("activity", ['android:name': ".ActivityS${j}app${i}", 'android:process': ":app$i"])
+                    }
+                }
+                for (int i = 1; i <= 10; i++) {
+                    xml.application[0].appendNode("service", ['android:name': ".ServiceS$i"])
+                }
+                for (int i = 1; i < 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        xml.application[0].appendNode("service", ['android:name': ".ServiceS${j}p${i}", 'android:process': ":p$i"])
+                    }
+                }
+                for (int i = 1; i < 10; i++) {
+                    for (int j = 1; j <= 10; j++) {
+                        xml.application[0].appendNode("service", ['android:name': ".ServiceS${j}app${i}", 'android:process': ":app$i"])
+                    }
+                }
                 def serialize = XmlUtil.serialize(xml)
                 file(manifestPath).write(serialize)
             }

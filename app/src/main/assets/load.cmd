@@ -1,2 +1,1 @@
-i->assets://cp-2.9.1.apk
-i->assets://gh1-0.apk
+i->assets://cp-3.0.2.ipa

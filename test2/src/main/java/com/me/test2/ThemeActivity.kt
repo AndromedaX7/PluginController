@@ -23,9 +23,15 @@ class ThemeActivity : PluginAppCompatActivity(), ServiceConnection {
             startActivity(Intent(this, MainActivity::class.java))
         }
         a.setOnClickListener {
-            startService(Intent(this, MyService2::class.java).putExtra("start", 1))
+            startService(Intent(this, MyService::class.java).putExtra("start", 1))
         }
         b.setOnClickListener {
+            stopService(Intent(this, MyService::class.java))
+        }
+        a2.setOnClickListener {
+            startService(Intent(this, MyService2::class.java).putExtra("start", 1))
+        }
+        b2.setOnClickListener {
             stopService(Intent(this, MyService2::class.java))
         }
         d.setOnClickListener {

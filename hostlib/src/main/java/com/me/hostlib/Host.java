@@ -12,11 +12,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.me.hostlib.plugin.ActivityCache;
-import com.me.hostlib.plugin.ActivitySlotManager;
 import com.me.hostlib.plugin.AndroidManifest;
 import com.me.hostlib.plugin.ManifestParser;
 import com.me.hostlib.plugin.ServiceCache;
-import com.me.hostlib.plugin.ServiceSlotManager;
+import com.me.hostlib.plugin.SlotController;
 import com.me.hostlib.plugin.SlotManager;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Host {
     private void prepareService(Intent intent) {
         ServiceInfo serviceInfo = getService(intent);
         if (serviceInfo != null) {
-            String key = ServiceSlotManager.getInstance().dispatchSlot(serviceInfo);
+            String key = SlotController.getInstance().dispatchSlot(serviceInfo);
             intent.setComponent(new ComponentName(intent.getComponent().getPackageName(), key));
             intent.putExtra("ServiceInfo", serviceInfo);
         }
@@ -63,7 +62,7 @@ public class Host {
         ActivityInfo activity = getActivity(intent);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (activity != null) {
-            String key = ActivitySlotManager.getInstance().dispatchSlot(activity);
+            String key = SlotController.getInstance().dispatchSlot(activity);
             intent.setComponent(new ComponentName(intent.getComponent().getPackageName(), key));
             intent.putExtra("ActivityInfo", activity);
         }
@@ -120,9 +119,9 @@ public class Host {
                     }
                     if (cc != null) {
 
-                        Log.w("receive action", action  );
-                        if (intent.getCategories()!=null)
-                        Log.w("receive category ","::"+intent.getCategories().toString());
+                        Log.w("receive action", action);
+                        if (intent.getCategories() != null)
+                            Log.w("receive category ", "::" + intent.getCategories().toString());
                         String name = cc.getName();
                         ComponentInfo componentInfo = ManifestParser.getInstance().getInfoCache().get(name);
                         if (componentInfo == null) return null;
@@ -147,7 +146,7 @@ public class Host {
 
     private ServiceInfo getService(Intent intent) {
         String className = intent.getComponent().getClassName();
-        if (className!=null) {
+        if (className != null) {
             ArrayList<ServiceCache> serviceInfo = SlotManager.getInstance().getServiceInfo();
             for (ServiceCache a : serviceInfo) {
                 if (a.getAi().name.equals(className)) {
@@ -182,7 +181,7 @@ public class Host {
     }
 
     public void cleanServiceSlot(String name) {
-        ServiceSlotManager.getInstance().cleanServiceSlot(name);
+        SlotController.getInstance().cleanServiceSlot(name);
     }
 
     public boolean prepareBindService(Intent intent) {

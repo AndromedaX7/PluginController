@@ -1,6 +1,8 @@
 package com.me.hostlib.plugin;
 
 import android.content.ContentProviderClient;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -20,7 +22,7 @@ public class SlotController {
 
     public static SlotController getInstance() {
         if (instance == null) {
-            synchronized (ActivitySlotManager.class) {
+            synchronized (SlotController.class) {
                 if (instance == null)
                     instance = new SlotController();
             }
@@ -34,11 +36,18 @@ public class SlotController {
         return client;
     }
 
+    public void cleanServiceSlot(String name) {
+        try {
+            client().call(ProcessMapping.clearServiceSlot, name, null);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String findSlotClass(String slotName) {
         Bundle bundle = null;
         try {
             bundle = client().call(ProcessMapping.findRealClassName, slotName, null);
-
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -46,7 +55,7 @@ public class SlotController {
         if (bundle != null && !TextUtils.isEmpty((className = bundle.getString(ProcessMapping.findRealClassName)))) {
             try {
                 if (!className.equals(slotName))
-                    client().call(ProcessMapping.clearSlot, slotName, null);
+                    client().call(ProcessMapping.clearActivitySlot, slotName, null);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -55,5 +64,48 @@ public class SlotController {
         } else {
             return slotName;
         }
+    }
+
+    public String dispatchSlot(ActivityInfo activityInfo) {
+
+        ContentProviderClient client = client();
+        Bundle bundle = new Bundle();
+
+        bundle.putParcelable(ProcessMapping.mappingActivity, activityInfo);
+        try {
+            Bundle mappingActivity = client.call(ProcessMapping.mappingActivity, null, bundle);
+            if (mappingActivity != null) {
+                String key = mappingActivity.getString(ProcessMapping.mappingActivity, "");
+                if (TextUtils.isEmpty(key)) {
+//   launch Empty
+                } else {
+                    return key;
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+    public String dispatchSlot(ServiceInfo serviceInfo) {
+        ContentProviderClient client = client();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ProcessMapping.mappingService, serviceInfo);
+        try {
+            Bundle mappingService = client.call(ProcessMapping.mappingService, null, bundle);
+            if (mappingService != null) {
+                String key = mappingService.getString(ProcessMapping.mappingService, "");
+                if (TextUtils.isEmpty(key)) {
+//   launch Empty
+                } else {
+                    return key;
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

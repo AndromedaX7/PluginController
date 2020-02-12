@@ -21,7 +21,6 @@ import com.me.hostlib.plugin.ManifestParser;
 import com.me.hostlib.plugin.ProviderService;
 import com.me.hostlib.plugin.ReceiverParser;
 import com.me.hostlib.plugin.ServiceCache;
-import com.me.hostlib.plugin.ServiceSlotManager;
 import com.me.hostlib.plugin.SlotManager;
 import com.me.hostlib.utils.PackageArchiveData;
 import com.me.hostlib.utils.PatchClassLoaderUtils;

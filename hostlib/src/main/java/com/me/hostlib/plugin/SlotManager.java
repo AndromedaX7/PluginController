@@ -4,6 +4,23 @@ import java.util.ArrayList;
 
 public class SlotManager {
     private static volatile SlotManager instance;
+    private final ArrayList<ActivityCache> activityInfo = new ArrayList<>();
+    private final ArrayList<ServiceCache> serviceInfo = new ArrayList<>();
+
+    private SlotManager() {
+    }
+
+    public static SlotManager getInstance() {
+        if (instance == null) {
+            synchronized (SlotManager.class) {
+                if (instance == null) {
+                    instance = new SlotManager();
+                }
+            }
+
+        }
+        return instance;
+    }
 
     public ArrayList<ActivityCache> getActivityInfo() {
         return activityInfo;
@@ -21,39 +38,8 @@ public class SlotManager {
         this.serviceInfo.addAll(serviceInfo);
     }
 
-    private final ArrayList<ActivityCache> activityInfo = new ArrayList<>();
-    private final ArrayList<ServiceCache> serviceInfo = new ArrayList<>();
-
-    public static SlotManager getInstance() {
-        if (instance == null) {
-            synchronized (SlotManager.class) {
-                if (instance == null) {
-                    instance = new SlotManager();
-                }
-            }
-
-        }
-        return instance;
-    }
-
-    private SlotManager() {
-    }
-
-
     public String findClass(String name) {
-//        String className = null;
-//        className = ActivitySlotManager.getInstance().findActivityClass(name);
-//        if (TextUtils.isEmpty(className)) {
-//            className = ServiceSlotManager.getInstance().findServiceClass(name);
-//        }
-//        return className;
-
-        String className = null;
-        className = ActivitySlotManager.getInstance().findActivityClass(name);
-        if (className.equals(name)) {
-            className = ServiceSlotManager.getInstance().findServiceClass(name);
-        }
-        return className;
+        return SlotController.getInstance().findSlotClass(name);
     }
 
     public String findPluginName(String className) {

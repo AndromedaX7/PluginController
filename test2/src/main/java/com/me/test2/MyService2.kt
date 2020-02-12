@@ -1,6 +1,5 @@
 package com.me.test2
 
-import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
@@ -24,15 +23,21 @@ class MyService2 : PluginService() {
         Log.e(TAG, "onUnbind")
         return super.onUnbind(intent)
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e(TAG, "onStartCommand")
 
         val intExtra = intent?.getIntExtra("start", 0)
-        when(intExtra){
-            1->{
-                startActivity(Intent(this,ImageActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        when (intExtra) {
+            1 -> {
+                startActivity(
+                    Intent(
+                        this,
+                        ImageActivity::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
             }
-            2->{
+            2 -> {
 
             }
         }
